@@ -1,0 +1,5 @@
+Scand Control Tower V6 — 2026-10-15
+TEST PASS 1: Syntax, 12 demo trucks, truck questions, natural-language unload update, multi-field update, missing-next-trip query, conflict query, glossary save, local persistence (emulated), model selection, desktop/mobile rendering: PASS.
+TEST PASS 2: Invalid dates, model output JSON field validation, blocked cabotage field, blocked wrong truck ID, privacy-minimized prompt context, Excel paste, WebGPU-unavailable fallback: PASS.
+Browser was headless Chromium. LocalStorage was emulated in tests because the runner blocked local URLs and about:blank native localStorage. Model output was simulated for tests. The actual model download/inference and live Supabase multi-user connection were NOT tested.
+All sample truck/driver data are fictitious. Do not use this as a legal compliance or dispatch authorization system.
