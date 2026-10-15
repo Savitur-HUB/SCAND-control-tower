@@ -1,0 +1,9 @@
+name = "scand-control-tower-ai"
+main = "index.js"
+compatibility_date = "2026-10-15"
+
+[ai]
+binding = "AI"
+
+[vars]
+ALLOWED_ORIGIN = "https://savitur-hub.github.io"
