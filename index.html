@@ -593,10 +593,10 @@ async function getSupabase(){
   return mod.createClient;
 }
 function savePublicSettings(url,key){try{localStorage.setItem(TEAM_CONFIG_KEY,JSON.stringify({url,key}))}catch(e){}}
-function loadPublicSettings(){try{return JSON.parse(localStorage.getItem(TEAM_CONFIG_KEY)||'{}')}catch{return {}}}
+function loadPublicSettings(){let saved={};try{saved=JSON.parse(localStorage.getItem(TEAM_CONFIG_KEY)||'{}')||{}}catch(e){}return {...saved,url:"https://nwdpewyfaffpbdlnbepo.supabase.co",key:"sb_publishable_3xSrFsREh7_w6N87zRLgyg_HGsHMDPb"}}
 function openCloudPanel(){
  const cfg=loadPublicSettings();
- let html=`<div class="cloud-help">GitHub Pages publicē mājaslapu, bet <b>kopīgais plāns glabājas Supabase datubāzē</b>. Lai ieslēgtu komandas režīmu, vispirms izpildi ZIP pakotnē iekļauto <b>SUPABASE_SETUP.sql</b> un pievieno atļautos lietotājus. Ievieto tikai publisko <b>anon/publishable</b> atslēgu — nekad service_role.</div>`;
+ let html=`<div class="cloud-help">GitHub Pages publicē mājaslapu, bet <b>kopīgais plāns glabājas Supabase datubāzē</b>. Kopīgā datubāze ir sagatavota. Lai pieslēgtos, ievadi sava apstiprinātā komandas konta e-pastu un paroli. Tehniskais URL un publiskā atslēga jau ir aizpildīti. Nepublicē darba datus, kamēr nav apstiprināta uzņēmuma datu drošības kārtība.</div>`;
  if(cloud.connected){html+=`<div class="cloud-row"><span>Aktīvais konts</span><b>${esc(cloud.email)}</b></div><div class="cloud-row"><span>Dokumenta versija</span><b id="versionView">${cloud.version}</b></div><p class="tiny">Izmaiņas tiek sinhronizētas apmēram ik pēc 15 sekundēm, un konflikta gadījumā labojums netiek pārrakstīts klusi.</p><div id="cloudNotice" class="tiny"></div>`;
  showDialog('Komandas datubāze',html,`<button class="btn" id="cloudPullBtn">↻ Atjaunot plānu</button><button class="btn" id="cloudSeedBtn">↑ Pārnest lokālo demo</button><button class="btn danger" id="cloudLogoutBtn">Izrakstīties</button><button class="btn ghost" id="cloudDoneBtn">Aizvērt</button>`,true);
  $('cloudPullBtn').onclick=()=>pullCloud(true);$('cloudSeedBtn').onclick=seedCloud;
