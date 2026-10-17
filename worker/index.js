@@ -1,18 +1,22 @@
 // Scand Control Tower AI proxy — Cloudflare Workers AI. No secrets in GitHub Pages.
 const MODEL='@cf/meta/llama-3.1-8b-instruct-fp8';
+// These two identifiers are PUBLIC, not credentials: RLS + user JWT protect data.
+const DEFAULT_SUPABASE_URL='https://nwdpewyfaffpbdlnbepo.supabase.co';
+const DEFAULT_SUPABASE_PUBLISHABLE_KEY="sb_publishable_3xSrFsREh7_w6N87zRLgyg_HGsHMDPb";
+const DEFAULT_ALLOWED_ORIGIN='https://savitur-hub.github.io';
 function response(data,status=200,origin=''){return new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json','Cache-Control':'no-store',...(origin?{'Access-Control-Allow-Origin':origin}:{})}})}
 export default {async fetch(req,env){
- const origin=req.headers.get('Origin')||'',allowed=(env.ALLOWED_ORIGIN||'').replace(/\/$/,'');
+ const origin=req.headers.get('Origin')||'',allowed=(env.ALLOWED_ORIGIN||DEFAULT_ALLOWED_ORIGIN).replace(/\/$/,'');
+ const url=new URL(req.url);
+ if(req.method==='GET'&&(url.pathname==='/'||url.pathname==='/health'))return response({service:'Scand Control Tower AI',ready:!!env.AI,note:'Use the Scand Control Tower app to chat.'},200,origin===allowed?allowed:'');
  if(origin!==allowed)return response({error:'Origin not allowed'},403);
  if(req.method==='OPTIONS')return new Response(null,{status:204,headers:{'Access-Control-Allow-Origin':allowed,'Access-Control-Allow-Methods':'POST,OPTIONS','Access-Control-Allow-Headers':'Content-Type,Authorization','Access-Control-Max-Age':'600'}});
- const url=new URL(req.url);
- if(url.pathname==='/health'&&req.method==='GET')return response({ok:true,configured:!!(env.AI&&env.SUPABASE_URL&&env.SUPABASE_ANON_KEY)},200,allowed);
  if(url.pathname!=='/api/ai'||req.method!=='POST')return response({error:'Not found'},404,allowed);
- if(!env.AI||!env.SUPABASE_URL||!env.SUPABASE_ANON_KEY)return response({error:'Server setup incomplete'},503,allowed);
+ if(!env.AI)return response({error:'Server setup incomplete'},503,allowed);
  const bearer=(req.headers.get('Authorization')||'').match(/^Bearer (.+)$/i)?.[1]||'';
  if(!bearer||bearer.length>5000)return response({error:'Please sign in to team workspace'},401,allowed);
- const sb=String(env.SUPABASE_URL).replace(/\/$/,'');
- const headers={'apikey':String(env.SUPABASE_ANON_KEY),'Authorization':'Bearer '+bearer};
+ const sb=String(env.SUPABASE_URL||DEFAULT_SUPABASE_URL).replace(/\/$/,'');
+ const headers={'apikey':String(env.SUPABASE_ANON_KEY||DEFAULT_SUPABASE_PUBLISHABLE_KEY),'Authorization':'Bearer '+bearer};
  try{
   const check=await fetch(sb+'/auth/v1/user',{headers});
   if(!check.ok)return response({error:'Invalid session'},401,allowed);
