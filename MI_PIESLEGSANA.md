@@ -1,12 +1,25 @@
-# Scand Control Tower — MI pieslēgšana
+# Scand Control Tower — ieslēgt MI Cloudflare bez programmēšanas
 
-V10 GitHub Pages jau ir MI čats gan telefonā, gan datorā. **Tas nav pieslēgts mākoņa MI, kamēr nav izveidots Worker un autorizēta Supabase datubāze.**
+**Statuss:** Scand Control Tower mājaslapa un Supabase darba datubāze jau izveidota. Cloudflare MI Worker vēl jāizvieto tavā Cloudflare kontā. Kamēr tas nav izdarīts, mākoņa MI čats nedarbosies.
 
-1. Izveido Supabase projektu un izpildi `SUPABASE_SETUP.sql` testa projektā. Izveido lietotāju kontus, pievieno `scand_members`. Neizmanto reālus kravu datus, kamēr nav pārbaudītas piekļuves tiesības.
-2. Izveido Cloudflare Workers projektu ar šajā repozitorijā esošo `worker/index.js` un `worker/wrangler.toml`. Aktivizē Workers AI binding `AI`. Pārbaudi bezmaksas limitus savā kontā.
-3. Cloudflare Worker iestatījumos pievieno **secrets**: `SUPABASE_URL` un `SUPABASE_ANON_KEY` (publiskā/anon projekta atslēga). NELIEC API slepenās atslēgas HTML vai publiskajā GitHub.
-4. Mājaslapā `Komandas režīms` autorizējies ar Supabase kontu.
-5. MI sadaļā ieliec publicētā Cloudflare Worker HTTPS adresi un saglabā.
-6. Pārbaudi testa jautājumus no tālruņa un datora. Saglabājamos labojumus apstiprina cilvēks.
+## 1. Izveido Worker (Cloudflare kontā)
+1. Atver [Cloudflare Dashboard](https://dash.cloudflare.com/) → **Workers & Pages**.
+2. Spied **Create application** → **Create Worker / Start with Hello World** (nosaukums UI var atšķirties).
+3. Nosaukums: `scand-control-tower-ai`. Spied **Deploy**.
+4. Atver Worker → **Edit Code**.
+5. Aizstāj visu parauga kodu ar [worker/index.js](https://github.com/Savitur-HUB/SCAND-control-tower/blob/main/worker/index.js) saturu un spied **Deploy**.
+6. Worker sadaļā **Settings → Bindings → Add** izvēlies **Workers AI**, binding name **AI**. Saglabā un izvieto izmaiņas. Šis solis ir obligāts.
 
-**GitHub glabā kodu**, nevis visas darbības un visas MI atbildes. `MI zināšanas` ir komandas terminu/glosārija konteksts, nevis automātiska modeļa pārmācīšana. Kabotāžas, darba un atpūtas laiku prognozes ir informatīvas un jāpārbauda pret dokumentiem/tahogrāfu.
+## 2. Pārbaudi
+Atver Cloudflare piešķirto `https://...workers.dev` adresi. Jāparādās JSON ar `"service":"Scand Control Tower AI"` un `"ready":true`.
+Ja rāda `ready:false`, jāpievieno Workers AI binding `AI`.
+
+Worker kodā jau ir projekta **publiskā Supabase adrese un publishable key**, tāpēc Cloudflare nevar prasīt ielīmēt slepenu Supabase atslēgu. Piekļuve datiem tiek pārbaudīta ar lietotāja autorizāciju un `scand_members` sarakstu. Nekad neizmanto `service_role` atslēgu šeit.
+
+## 3. Pieslēdz Control Tower
+Atsūti ChatGPT savu **publisko Worker URL** (bez parolēm/tokenu datiem). Pēc tam varu to uzstādīt GitHub mājaslapā kā noklusējuma MI serveri visai komandai. Pretējā gadījumā var manuāli ievietot Worker URL Control Tower MI iestatījumos.
+
+## 4. Kolēģu konti
+Supabase `Authentication → Users` izveido vai uzaicini darbinieku kontus un pievieno apstiprināto lietotāju `user_id` tabulā `public.scand_members`. Tieši šis dalībnieku saraksts kontrolē piekļuvi. Darbiniekiem būs vajadzīga pieteikšanās **Komandas režīms**, lai varētu lietot mākoņa MI.
+
+**Piezīmes:** Neievadi produkcijas kravu vai klientu datus, kamēr darba devējs nav apstiprinājis ārēju pakalpojumu izmantošanu un piekļuves drošība nav pārbaudīta. Bezmaksas Cloudflare Workers AI ir dienas apjoma ierobežojumi. MI piedāvātie labojumi jāapstiprina dispečeram.
