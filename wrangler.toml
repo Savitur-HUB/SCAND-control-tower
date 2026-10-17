@@ -1,0 +1,12 @@
+# Cloudflare Workers Builds: deploy the authenticated AI API, NOT the GitHub Pages static site.
+# The Cloudflare project's name on its dashboard must match this name.
+name = "scand-control-tower"
+main = "worker/index.js"
+compatibility_date = "2026-10-15"
+workers_dev = true
+
+[ai]
+binding = "AI"
+
+[vars]
+ALLOWED_ORIGIN = "https://savitur-hub.github.io"
