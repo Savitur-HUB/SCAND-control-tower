@@ -463,7 +463,8 @@ let aiWorking=false;
 const AI_UPDATE_KEYS=new Set(['plate','department','driver','phone','carrier','currentFrom','currentTo','loadAt','unloadAt','nextFrom','nextTo','nextLoadAt','status','trailer','ldm','payloadKg','regions','rate','notes']);
 const aiStatus=txt=>{const el=$('localAiStatus');if(el)el.textContent=txt};
 const AI_ENDPOINT_KEY='scand-v9-cloudflare-ai-endpoint';
-const getAIEndpoint=()=>{try{return localStorage.getItem(AI_ENDPOINT_KEY)||''}catch(e){return ''}};
+const DEFAULT_AI_ENDPOINT='https://scand-control-tower.spalva-davis.workers.dev';
+const getAIEndpoint=()=>{try{return localStorage.getItem(AI_ENDPOINT_KEY)||DEFAULT_AI_ENDPOINT}catch(e){return DEFAULT_AI_ENDPOINT}};
 function setupCloudAI(){
  $('cloudAiUrl').value=getAIEndpoint();
  $('saveCloudAiBtn').onclick=()=>{
