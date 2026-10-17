@@ -8,7 +8,7 @@ function response(data,status=200,origin=''){return new Response(JSON.stringify(
 export default {async fetch(req,env){
  const origin=req.headers.get('Origin')||'',allowed=(env.ALLOWED_ORIGIN||DEFAULT_ALLOWED_ORIGIN).replace(/\/$/,'');
  const url=new URL(req.url);
- if(req.method==='GET'&&(url.pathname==='/'||url.pathname==='/health'))return response({service:'Scand Control Tower AI',ready:!!env.AI,note:'Use the Scand Control Tower app to chat.'},200,origin===allowed?allowed:'');
+ if(req.method==='GET'&&(url.pathname==='/'||url.pathname==='/health'))return response({service:'Scand Control Tower AI',ready:!!env.AI,note:'Use the Scand Control Tower app to chat.'},200,'*');
  if(origin!==allowed)return response({error:'Origin not allowed'},403);
  if(req.method==='OPTIONS')return new Response(null,{status:204,headers:{'Access-Control-Allow-Origin':allowed,'Access-Control-Allow-Methods':'POST,OPTIONS','Access-Control-Allow-Headers':'Content-Type,Authorization','Access-Control-Max-Age':'600'}});
  if(url.pathname!=='/api/ai'||req.method!=='POST')return response({error:'Not found'},404,allowed);
