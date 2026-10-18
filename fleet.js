@@ -171,4 +171,6 @@
  $('fleetSearch').addEventListener('input',renderFleet);
  $('fleetDept').addEventListener('change',renderFleet);
  renderFleet();
+ // Deep-link to the phone-friendly fleet board without interfering with normal V10 start-up.
+ if(window.location.hash==='#fleet')switchTab('fleet');
 })();
