@@ -49,7 +49,7 @@
    '<div class="fleet-card-head"><button class="truck-link" data-fleet-profile="'+safe(t.id)+'">'+safe(t.id)+' ↗</button><span class="fleet-badge">'+safe(t.department)+'</span></div>'+
    '<div class="fleet-driver">'+safe(t.driver||'Nav norādīts šoferis')+' · '+safe(t.status||'Jāprecizē')+'</div>'+
    '<div class="fleet-details">'+
-     '<div class="fleet-detail fleet-wide"><small>Kur brauc / pašreizējais maršruts</small><b>'+truckRoute(t)+'</b></div>'+
+     '<div class="fleet-detail fleet-wide"><small>Atbildīgās nodaļas plāns · ne GPS</small><b>'+truckRoute(t)+'</b></div>'+
      '<div class="fleet-detail fleet-wide"><small>Nākamais reiss</small><b>'+safe(t.nextFrom||'—')+' → '+safe(t.nextTo||'Nav plānots')+'</b></div>'+
      '<div class="fleet-detail"><small>Kabotāža</small><b>'+safe(cbSummary(t))+'</b></div>'+
      '<div class="fleet-detail"><small>Uzskaitīti km</small><b>'+(km?safe(km.distance.toLocaleString('lv-LV'))+' km':'Nav datu')+'</b></div>'+
@@ -86,7 +86,9 @@
   const changes=(state.logs||[]).filter(l=>l.id===t.id).slice(0,10);
   function info(label,v){return '<div><small>'+safe(label)+'</small><strong>'+safe(v||'Nav norādīts')+'</strong></div>'}
   const body='<div class="fleet-profile-grid">'+
-   info('Nodaļa / statuss',(t.department||'')+' · '+(t.status||''))+
+   info('Atbildīgā nodaļa / statuss',(t.department||'')+' · '+(t.status||''))+
+   info('Aktuālā Excel nodaļas sadaļa',t.excelOwner||'Nav apstiprināta')+
+   info('Avots',t.excelSource||'Iepriekšējais V10 ieraksts')+
    info('Šoferis',t.driver)+info('Pārvadātājs',t.carrier)+
    info('Pašreizējais maršruts',(t.currentFrom||'—')+' → '+(t.currentTo||'Nav datu'))+
    info('Nākamais maršruts',(t.nextFrom||'—')+' → '+(t.nextTo||'Nav plānots'))+
@@ -96,6 +98,7 @@
    info('Pabeigto reisu uzskaitītie km',km?km.distance.toLocaleString('lv-LV')+' km · '+km.count+' reisi':'Nav datu')+
    info('Reisu žurnāla ieraksti',String(trips.length))+
    '</div>'+
+   (t.excelSource?'<div class="fleet-journey"><b>Excel TT · nodaļu ieraksti (atsaucei)</b><br><b>EXP:</b> '+safe(t.excelExport||'Nav ieraksta')+'<br><b>CROSS:</b> '+safe(t.excelCross||'Nav ieraksta')+'<br><b>IMP:</b> '+safe(t.excelImport||'Nav ieraksta')+'<br><small>Galvenajā kartītē ir tikai atbildīgās nodaļas saturs, nevis automātiski Export ieraksts. Šie ir Excel kopijas dati, nevis tiešraide.</small></div>':'')+
    (t.homePlanNote?'<div class="fleet-journey"><b>Mājās piezīme</b><br>'+safe(t.homePlanNote)+'</div>':'')+
    (t.notes?'<div class="fleet-journey"><b>Esošā plāna piezīmes</b><br>'+safe(t.notes)+'</div>':'')+
    '<div class="fleet-profile-actions">'+
